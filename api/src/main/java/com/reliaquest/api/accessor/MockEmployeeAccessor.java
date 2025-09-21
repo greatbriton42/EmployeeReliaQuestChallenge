@@ -17,10 +17,10 @@ public class MockEmployeeAccessor {
         this.restClient = restClient;
     }
 
-    public Employee getEmployees() {
+    public Employee getEmployee(final int id) {
         final ResponseEntity<Employee> response = restClient
                 .get()
-                .uri("/employee")
+                .uri("/employee/{id}", id)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .toEntity(Employee.class);
