@@ -27,15 +27,16 @@ public class EmployeeComponent {
         final List<Employee> allEmployees = employeeAccessor.getEmployees();
 
         return allEmployees.stream()
-                .filter(employee -> Objects.equals(employee.getEmployeeName(), name))
+                .filter(employee ->
+                        employee.getEmployeeName().toLowerCase(Locale.ROOT).contains(name.toLowerCase(Locale.ROOT)))
                 .toList();
     }
 
     public int getHighestSalary() {
         final List<Employee> allEmployees = employeeAccessor.getEmployees();
 
-        final Optional<Employee> highestEmployee = allEmployees.stream()
-                .max((curr, next) -> Integer.max(curr.getEmployeeSalary(), next.getEmployeeSalary()));
+        final Optional<Employee> highestEmployee =
+                allEmployees.stream().max(Comparator.comparingInt(Employee::getEmployeeSalary));
 
         return highestEmployee.map(Employee::getEmployeeSalary).orElse(0);
     }

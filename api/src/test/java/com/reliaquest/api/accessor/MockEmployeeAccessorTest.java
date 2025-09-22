@@ -1,5 +1,6 @@
 package com.reliaquest.api.accessor;
 
+import static com.reliaquest.api.constants.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -17,36 +18,18 @@ import org.springframework.web.client.RestClient;
 @ExtendWith(MockitoExtension.class)
 public class MockEmployeeAccessorTest {
 
-    private final RestClient restClientMock = mock(RestClient.class);
-
     // Normally I would want to use @Mock and @InjectMock, but for some reason I couldn't get the build to work.
-    // I don't know what you guys internally, but figure I mention. This is just uglier and the reason Mockito
+    // and didn't want to spend to much time messing with it when I have an alternative.
+    // I don't know what you guys do internally, but figure I mention. This is just uglier and the reason Mockito
     // came out with the mentioned annotations.
 
+    private final RestClient restClientMock = mock(RestClient.class);
     private final RestClient.RequestHeadersUriSpec uriSpecMock = mock(RestClient.RequestHeadersUriSpec.class);
     private final RestClient.RequestBodyUriSpec bodyUriSpecMock = mock(RestClient.RequestBodyUriSpec.class);
     private final RestClient.RequestBodySpec bodySpecMock = mock(RestClient.RequestBodySpec.class);
     private final RestClient.ResponseSpec responseSpecMock = mock(RestClient.ResponseSpec.class);
 
     private final MockEmployeeAccessor mockEmployeeAccessor = new MockEmployeeAccessor(restClientMock);
-
-    private final Employee mockEmployee = Employee.builder()
-            .id("1")
-            .employeeAge(45)
-            .employeeName("Bob Barker")
-            .employeeTitle("MyBigTitle")
-            .employeeSalary(500000)
-            .employeeEmail("MyTestEmail")
-            .build();
-
-    private final Employee mockEmployee2 = Employee.builder()
-            .id("2")
-            .employeeAge(35)
-            .employeeName("Steve Irwin")
-            .employeeTitle("MyJrTitle")
-            .employeeSalary(100000)
-            .employeeEmail("MyTestEmail2")
-            .build();
 
     public void setUpGetOrDelete() {
         when(restClientMock.get()).thenReturn(uriSpecMock);
@@ -68,19 +51,19 @@ public class MockEmployeeAccessorTest {
     @Test
     public void testGetEmployeeSuccess() {
         setUpGetOrDelete();
-        ResponseEntity<Employee> mockResponse = ResponseEntity.ok(mockEmployee);
+        ResponseEntity<Employee> mockResponse = ResponseEntity.ok(TEST_EMPLOYEE_1);
         when(responseSpecMock.toEntity(Employee.class)).thenReturn(mockResponse);
 
-        Employee employee = mockEmployeeAccessor.getEmployee("1");
+        Employee employee = mockEmployeeAccessor.getEmployee(EMPLOYEE_ID);
 
         assertNotNull(employee);
-        verify(uriSpecMock).uri("/employee/{id}", "1");
+        verify(uriSpecMock).uri("/employee/{id}", EMPLOYEE_ID);
     }
 
     @Test
     public void testGetEmployeesSuccess() {
         setUpGetOrDelete();
-        ResponseEntity<List<Employee>> mockResponse = ResponseEntity.ok(List.of(mockEmployee, mockEmployee2));
+        ResponseEntity<List<Employee>> mockResponse = ResponseEntity.ok(List.of(TEST_EMPLOYEE_1, TEST_EMPLOYEE_2));
         when(responseSpecMock.toEntity(new ParameterizedTypeReference<List<Employee>>() {}))
                 .thenReturn(mockResponse);
 
@@ -93,33 +76,25 @@ public class MockEmployeeAccessorTest {
     @Test
     public void testPostEmployeeSuccess() {
         setUpPost();
-        final Employee createEmployee = Employee.builder()
-                .id("3")
-                .employeeAge(19)
-                .employeeName("Randy Jones")
-                .employeeTitle("MyNewTitle")
-                .employeeSalary(60000)
-                .employeeEmail("MyJobEmail")
-                .build();
 
-        ResponseEntity<Employee> mockResponse = ResponseEntity.ok(createEmployee);
+        ResponseEntity<Employee> mockResponse = ResponseEntity.ok(TEST_EMPLOYEE_3);
         when(responseSpecMock.toEntity(Employee.class)).thenReturn(mockResponse);
 
-        Employee employee = mockEmployeeAccessor.postEmployee(createEmployee);
+        Employee employee = mockEmployeeAccessor.postEmployee(TEST_EMPLOYEE_3);
 
-        assertEquals(employee, createEmployee);
+        assertEquals(TEST_EMPLOYEE_3, employee);
         verify(bodyUriSpecMock).uri("/employee");
     }
 
     @Test
     public void testDeleteEmployeeSuccess() {
         setUpGetOrDelete();
-        ResponseEntity<Employee> mockResponse = ResponseEntity.ok(mockEmployee);
+        ResponseEntity<Employee> mockResponse = ResponseEntity.ok(TEST_EMPLOYEE_1);
         when(responseSpecMock.toEntity(Employee.class)).thenReturn(mockResponse);
 
-        Employee employee = mockEmployeeAccessor.deleteEmployee("1");
+        Employee employee = mockEmployeeAccessor.deleteEmployee(EMPLOYEE_ID);
 
         assertNotNull(employee);
-        verify(uriSpecMock).uri("/employee/{id}", "1");
+        verify(uriSpecMock).uri("/employee/{id}", EMPLOYEE_ID);
     }
 }
