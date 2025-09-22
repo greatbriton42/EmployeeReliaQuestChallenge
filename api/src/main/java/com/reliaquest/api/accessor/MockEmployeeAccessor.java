@@ -19,7 +19,7 @@ public class MockEmployeeAccessor {
         this.restClient = restClient;
     }
 
-    public Employee getEmployee(final int id) {
+    public Employee getEmployee(final String id) {
         final ResponseEntity<Employee> response = restClient
                 .get()
                 .uri("/employee/{id}", id)
@@ -53,7 +53,7 @@ public class MockEmployeeAccessor {
         return response.getBody();
     }
 
-    public Employee deleteEmployee(int id) {
+    public Employee deleteEmployee(String id) {
         final ResponseEntity<Employee> response = restClient
                 .delete()
                 .uri("/employee/{id}", id)

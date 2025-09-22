@@ -71,10 +71,10 @@ public class MockEmployeeAccessorTest {
         ResponseEntity<Employee> mockResponse = ResponseEntity.ok(mockEmployee);
         when(responseSpecMock.toEntity(Employee.class)).thenReturn(mockResponse);
 
-        Employee employee = mockEmployeeAccessor.getEmployee(1);
+        Employee employee = mockEmployeeAccessor.getEmployee("1");
 
         assertNotNull(employee);
-        verify(uriSpecMock).uri("/employee/{id}", 1);
+        verify(uriSpecMock).uri("/employee/{id}", "1");
     }
 
     @Test
@@ -117,9 +117,9 @@ public class MockEmployeeAccessorTest {
         ResponseEntity<Employee> mockResponse = ResponseEntity.ok(mockEmployee);
         when(responseSpecMock.toEntity(Employee.class)).thenReturn(mockResponse);
 
-        Employee employee = mockEmployeeAccessor.deleteEmployee(1);
+        Employee employee = mockEmployeeAccessor.deleteEmployee("1");
 
         assertNotNull(employee);
-        verify(uriSpecMock).uri("/employee/{id}", 1);
+        verify(uriSpecMock).uri("/employee/{id}", "1");
     }
 }
